@@ -1,0 +1,52 @@
+<html>
+ 
+  <canvas id="game" width="800" height="600"></canvas>
+ 
+ <script>
+  var canvas;
+  var canvasContext;
+  var ballX=100,ballY=200,ballspeedX = 5;
+ 
+  window.onload = function()
+  {
+  
+  canvas = document.getElementById('game');
+  canvasContext = canvas.getContext('2d');
+  var fps = 30;
+  setInterval(function () { move(); draw();} , 1000/fps);
+  
+  }
+    function move ()
+	{
+	  ballX = ballX+ballspeedX;
+	  if (ballX > canvas.width)
+	   { 
+	     ballspeedX = -ballspeedX;
+	   }
+	  if (ballX < 0)
+	   { 
+	     ballspeedX = -ballspeedX;
+	   }	
+	}
+   function draw()
+   {  
+    colorRect(0,0,canvas.width,canvas.height,'black');//canvas
+    colorRect(0,100,10,100,'yellow');//batleft
+	colorCircle(ballX,50,10,'red');//ball
+   
+	
+   }
+    function colorCircle(centerX,centerY,radius,Ccolor)
+    {
+	  canvasContext.fillStyle = Ccolor;
+	  canvasContext.beginPath();
+	  canvasContext.arc(centerX,centerY,radius,0,Math.PI*2,true);
+	  canvasContext.fill();
+	}
+   function colorRect(leftX,topY,width,height,Dcolor)
+    {
+	 canvasContext.fillStyle = Dcolor;
+     canvasContext.fillRect(leftX,topY,width,height);
+	}
+ </script>
+ </html>
