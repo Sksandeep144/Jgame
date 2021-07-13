@@ -5,7 +5,24 @@
  <script>
   var canvas;
   var canvasContext;
-  var ballX=100,ballY=200,ballspeedX = 5;
+  var ballX=50,ballY=50,ballspeedX = 10,ballspeedY = 4;
+  const paddle_height = 100;
+  const paddle_thickness = 10;
+  var paddle1Y = 250 ;
+  var paddle2Y = 250 ;
+  
+  function CalcmousePos(evnt)
+   { 
+    var rect = canvas.getBoundingClientRect();
+	var root = document.documentElement;
+	var mouseX = evnt.clientX - rect.left - root.scrollLeft;
+	var mouseY = evnt.clientY - rect.top - root.scrollTop;
+	return {
+	         x:mouseX,
+			 y:mouseY
+	       };
+   }
+  
  
   window.onload = function()
   {
@@ -15,24 +32,69 @@
   var fps = 30;
   setInterval(function () { move(); draw();} , 1000/fps);
   
+   canvas.addEventListener('mousemove' , function(evnt) {
+     var mousePos = CalcmousePos(evnt);
+	    paddle1Y = mousePos.y - (paddle_height/2);
+   });
+  
   }
+     function ballReset()
+	 {
+	  ballspeedX = -ballspeedX;
+	  ballX = canvas.width/2;
+	  ballY = canvas.height/2;
+	 }
+	 function AiBat()
+	  {  var paddle2Center = paddle2Y + (paddle_height/2)
+	    if (paddle2Center < ballY - 35 )
+		 {
+		  paddle2Y += 5 ;
+		 }
+		else if (paddle2Center > ballY - 35 )
+         {
+		   paddle2Y -= 5;
+          }		 
+	  }
     function move ()
 	{
+	  AiBat();
 	  ballX = ballX+ballspeedX;
+	  ballY = ballY+ballspeedY;
 	  if (ballX > canvas.width)
 	   { 
-	     ballspeedX = -ballspeedX;
+	     if(ballY > paddle2Y && ballY < paddle2Y+paddle_height)
+		  {
+		    ballspeedX = -ballspeedX;
+		  }
+		   else {
+	     ballReset();
+		        }
 	   }
 	  if (ballX < 0)
 	   { 
-	     ballspeedX = -ballspeedX;
-	   }	
+	     if(ballY > paddle1Y && ballY < paddle1Y+paddle_height)
+		  {
+		    ballspeedX = -ballspeedX;
+		  }
+		   else {
+	     ballReset();
+		        }
+	   }
+      if (ballY > canvas.height)
+	   { 
+	     ballspeedY = -ballspeedY;
+	   }
+	  if (ballY < 0)
+	   { 
+	     ballspeedY = -ballspeedY;
+	   }	   
 	}
    function draw()
    {  
     colorRect(0,0,canvas.width,canvas.height,'black');//canvas
-    colorRect(0,100,10,100,'yellow');//batleft
-	colorCircle(ballX,50,10,'red');//ball
+    colorRect(0,paddle1Y,paddle_thickness,paddle_height,'yellow');//batleft
+	colorRect(canvas.width-paddle_thickness,paddle2Y,paddle_thickness,paddle_height,'yellow');//bat right
+	colorCircle(ballX,ballY,7,'red');//ball
    
 	
    }
